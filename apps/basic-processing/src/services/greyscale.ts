@@ -15,27 +15,26 @@ export class GreyscaleService {
       if (!fs.existsSync(imagePath)) {
         throw new Error('File does not exist');
       }
-
+  
       const result = await convertToGreyscale(imagePath);
-
+  
       const outputDir = path.join(process.cwd(), 'apps/basic-processing/output_images');
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
       }
-
-      const outputFilename = filename.endsWith('.png') ? `${filename}.jpg` : filename;
-      const outputPath = path.join(outputDir, outputFilename);
-
+  
+      const outputPath = path.join(outputDir, filename);
+  
       await sharp(result.buffer, {
         raw: {
-          width: result.height,
-          height: result.width,
-          channels: 3
+          width: result.width,
+          height: result.height,
+          channels: 1 // Assuming 1-channel greyscale output
         }
       })
         .png()
         .toFile(outputPath);
-
+  
       return {
         success: true,
         filePath: outputPath
